@@ -67,18 +67,20 @@ async function main(){
     var resolutionLocation = gl.getUniformLocation(program, "u_resolution");
     var colorLocation = gl.getUniformLocation(program, 'u_color');
     var translationLocation = gl.getUniformLocation(program, 'u_translation');
+    var rotationLocation = gl.getUniformLocation(program, "u_rotation");
 
     var positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer); // pensar en "gl.ARRAY_BUFFER" = positionBuffer
     setGeometry(gl);
 
-    var translation = [0, 0];
+    var translation = [135, 135];
+    var rotation = [0, 1];
     var color = [Math.random(), Math.random(), Math.random(), 1];
 
     drawScene();
     
     window.addEventListener("keydown", (event) =>{
-        console.log(event.code,' / ',translation);
+        // console.log(event.code,' / ',translation);
         if(event.code=='ArrowUp' || event.code=='ArrowDown'){
             translation[1] += keys[event.code];
         }
@@ -89,6 +91,15 @@ async function main(){
         
         drawScene();
     });
+
+    document.getElementById("myRange").oninput = function(e) {
+        document.getElementById("angleValue").innerHTML = e.target.value;
+        var angleInDegrees = 360 - e.target.value;
+        var angleInRadians = angleInDegrees * Math.PI / 180;
+        rotation[0] = Math.sin(angleInRadians);
+        rotation[1] = Math.cos(angleInRadians);
+        drawScene();
+    }
 
     function drawScene() {
         initResize(gl.canvas)
@@ -118,14 +129,17 @@ async function main(){
         gl.vertexAttribPointer(
             positionLocation, size, type, normalize, stride, offset);
     
-        // set the resolution
+        // setear la resolution
         gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
     
-        // set the color
+        // setear el color
         gl.uniform4fv(colorLocation, color);
 
-        // set the translation
+        // setear la translacion
         gl.uniform2fv(translationLocation, translation);
+
+        // setear la rotacion.
+        gl.uniform2fv(rotationLocation, rotation);
     
         // Draw the rectangle.
         var primitiveType = gl.TRIANGLES;

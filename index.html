@@ -8,8 +8,15 @@
     <title>Document</title>
 </head>
 <body>
+    <div class="slidecontainer">
+        <input type="range" min="0" max="360" value="0" class="slider" id="myRange" placeholder="angulo de rotacion °">
+        <span id="angleValue"></span>
+    </div>
     <canvas id="myCanvas"></canvas>
 </body>
+<script>
+    document.getElementById("angleValue").innerHTML =  document.getElementById("myRange").value;
+</script>
 <script id="vsh" src="vertexShader.glsl" type="notjs"></script>
 <script id="fsh" src="fragmentShader.glsl" type="notjs"></script>
 <script src="utils.js"></script>
