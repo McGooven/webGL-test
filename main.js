@@ -68,6 +68,7 @@ async function main(){
     var colorLocation = gl.getUniformLocation(program, 'u_color');
     var translationLocation = gl.getUniformLocation(program, 'u_translation');
     var rotationLocation = gl.getUniformLocation(program, "u_rotation");
+    var scaleLocation = gl.getUniformLocation(program, "u_scale");
 
     var positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer); // pensar en "gl.ARRAY_BUFFER" = positionBuffer
@@ -75,6 +76,7 @@ async function main(){
 
     var translation = [135, 135];
     var rotation = [0, 1];
+    var scale = [1, 1];
     var color = [Math.random(), Math.random(), Math.random(), 1];
 
     drawScene();
@@ -100,6 +102,18 @@ async function main(){
         rotation[1] = Math.cos(angleInRadians);
         drawScene();
     }
+
+    document.getElementById("myRangeScalex").oninput = (e)=>{
+        document.getElementById("scaleX").innerHTML = e.target.value;
+        scale[0] = e.target.value;
+        drawScene();
+    };
+    document.getElementById("myRangeScaley").oninput = (e)=>{
+        document.getElementById("scaleY").innerHTML = e.target.value;
+        scale[1] = e.target.value;
+        drawScene();
+    };
+    
 
     function drawScene() {
         initResize(gl.canvas)
@@ -140,6 +154,9 @@ async function main(){
 
         // setear la rotacion.
         gl.uniform2fv(rotationLocation, rotation);
+
+        // setear el escalado
+        gl.uniform2fv(scaleLocation, scale);
     
         // Draw the rectangle.
         var primitiveType = gl.TRIANGLES;
