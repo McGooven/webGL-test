@@ -1,0 +1,5 @@
+#myCanvas{
+    display: block;  /* prevents scrollbar */
+    width: 30vw;
+    height: 70vh;
+}
