@@ -66,21 +66,20 @@ async function main(){
     // obtener uniforms
     var resolutionLocation = gl.getUniformLocation(program, "u_resolution");
     var colorLocation = gl.getUniformLocation(program, 'u_color');
-    var translationLocation = gl.getUniformLocation(program, 'u_translation');
-    var rotationLocation = gl.getUniformLocation(program, "u_rotation");
-    var scaleLocation = gl.getUniformLocation(program, "u_scale");
+    var matrixLocation = gl.getUniformLocation(program, 'u_matrix');
 
     var positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer); // pensar en "gl.ARRAY_BUFFER" = positionBuffer
     setGeometry(gl);
 
     var translation = [135, 135];
-    var rotation = [0, 1];
+    var angleInRadians = 0;
     var scale = [1, 1];
     var color = [Math.random(), Math.random(), Math.random(), 1];
 
     drawScene();
     
+    // actualizar la posicion
     window.addEventListener("keydown", (event) =>{
         // console.log(event.code,' / ',translation);
         if(event.code=='ArrowUp' || event.code=='ArrowDown'){
@@ -94,20 +93,22 @@ async function main(){
         drawScene();
     });
 
+    // actualizar la rotacion
     document.getElementById("myRange").oninput = function(e) {
         document.getElementById("angleValue").innerHTML = e.target.value;
         var angleInDegrees = 360 - e.target.value;
-        var angleInRadians = angleInDegrees * Math.PI / 180;
-        rotation[0] = Math.sin(angleInRadians);
-        rotation[1] = Math.cos(angleInRadians);
+        angleInRadians = angleInDegrees * Math.PI / 180;
         drawScene();
     }
 
+    // actualizar el escalado en x
     document.getElementById("myRangeScalex").oninput = (e)=>{
         document.getElementById("scaleX").innerHTML = e.target.value;
         scale[0] = e.target.value;
         drawScene();
     };
+
+    // actualizar el escalado en y
     document.getElementById("myRangeScaley").oninput = (e)=>{
         document.getElementById("scaleY").innerHTML = e.target.value;
         scale[1] = e.target.value;
@@ -140,25 +141,23 @@ async function main(){
         var normalize = false; // don't normalize the data
         var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
         var offset = 0;        // start at the beginning of the buffer
-        gl.vertexAttribPointer(
-            positionLocation, size, type, normalize, stride, offset);
+        gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
     
-        // setear la resolution
+        // Procesando las matrices
+        let translationMatrix = m3.traslacion(translation[0], translation[1]);
+        let rotationMatrix = m3.rotacion(angleInRadians);
+        let scaleMatrix = m3.escalado(scale[0], scale[1]);
+
+        // Multiplicacion de matrices con un orden específico
+        let matrix = m3.multiplicar(translationMatrix, rotationMatrix);
+        matrix = m3.multiplicar(matrix, scaleMatrix);
+
+        // asignarle el valor a los uniforms
         gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
-    
-        // setear el color
         gl.uniform4fv(colorLocation, color);
+        gl.uniformMatrix3fv(matrixLocation, false, matrix);
 
-        // setear la translacion
-        gl.uniform2fv(translationLocation, translation);
-
-        // setear la rotacion.
-        gl.uniform2fv(rotationLocation, rotation);
-
-        // setear el escalado
-        gl.uniform2fv(scaleLocation, scale);
-    
-        // Draw the rectangle.
+        // dibujar la figura geometrica
         var primitiveType = gl.TRIANGLES;
         var offset = 0;
         var count = 18; // 6 triangulos para la F, por ende 3 vertices por triangulo.
