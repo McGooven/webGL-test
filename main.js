@@ -64,7 +64,6 @@ async function main(){
     var positionLocation = gl.getAttribLocation(program, "a_position");
 
     // obtener uniforms
-    var resolutionLocation = gl.getUniformLocation(program, "u_resolution");
     var colorLocation = gl.getUniformLocation(program, 'u_color');
     var matrixLocation = gl.getUniformLocation(program, 'u_matrix');
 
@@ -144,16 +143,17 @@ async function main(){
         gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
     
         // Procesando las matrices
+        let projectionMatrix = m3.projection(gl.canvas.clientWidth, gl.canvas.clientHeight);
         let translationMatrix = m3.traslacion(translation[0], translation[1]);
         let rotationMatrix = m3.rotacion(angleInRadians);
         let scaleMatrix = m3.escalado(scale[0], scale[1]);
 
         // Multiplicacion de matrices con un orden específico
-        let matrix = m3.multiplicar(translationMatrix, rotationMatrix);
+        let matrix = m3.multiplicar(projectionMatrix, translationMatrix);
+        matrix = m3.multiplicar(matrix, rotationMatrix)
         matrix = m3.multiplicar(matrix, scaleMatrix);
 
         // asignarle el valor a los uniforms
-        gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
         gl.uniform4fv(colorLocation, color);
         gl.uniformMatrix3fv(matrixLocation, false, matrix);
 
