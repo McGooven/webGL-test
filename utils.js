@@ -195,4 +195,16 @@ let m3 = {
             -1, 1, 1
         ];
     },
+
+    translate:(m, tx, ty)=>{
+        return m3.multiplicar(m, m3.traslacion(tx, ty));
+    },
+
+    rotate: (m, angleInRadians)=>{
+        return m3.multiplicar(m, m3.rotacion(angleInRadians));
+    },
+
+    scale: (m, sx, sy)=>{
+        return m3.multiplicar(m, m3.escalado(sx, sy));
+    }
 }

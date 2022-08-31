@@ -142,16 +142,11 @@ async function main(){
         var offset = 0;        // start at the beginning of the buffer
         gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
     
-        // Procesando las matrices
-        let projectionMatrix = m3.projection(gl.canvas.clientWidth, gl.canvas.clientHeight);
-        let translationMatrix = m3.traslacion(translation[0], translation[1]);
-        let rotationMatrix = m3.rotacion(angleInRadians);
-        let scaleMatrix = m3.escalado(scale[0], scale[1]);
-
-        // Multiplicacion de matrices con un orden específico
-        let matrix = m3.multiplicar(projectionMatrix, translationMatrix);
-        matrix = m3.multiplicar(matrix, rotationMatrix)
-        matrix = m3.multiplicar(matrix, scaleMatrix);
+        // Procesando las matrices en un orden específico
+        let matrix = m3.projection(gl.canvas.clientWidth, gl.canvas.clientHeight);
+        matrix = m3.translate(matrix, translation[0], translation[1]);
+        matrix = m3.rotate(matrix, angleInRadians)
+        matrix = m3.scale(matrix, scale[0], scale[1]);
 
         // asignarle el valor a los uniforms
         gl.uniform4fv(colorLocation, color);
