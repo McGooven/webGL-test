@@ -1,9 +1,9 @@
 // attribute recibe data desde un buffer
-attribute vec2 a_position;
+attribute vec4 a_position;
 
-uniform mat3 u_matrix;
+uniform mat4 u_matrix;
 
 void main(){
     // multiplica la posicion por la matriz.
-    gl_Position = vec4((u_matrix * vec3(a_position, 1)).xy, 0, 1);
+    gl_Position = u_matrix * a_position;
 }

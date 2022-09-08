@@ -10,28 +10,28 @@ function setGeometry(gl){
         gl.ARRAY_BUFFER, 
         new Float32Array([
             // left column
-            0, 0,
-            30, 0,
-            0, 150,
-            0, 150,
-            30, 0,
-            30, 150,
+             0,   0, 0,
+            30,   0, 0,
+             0, 150, 0,
+             0, 150, 0,
+            30,   0, 0,
+            30, 150, 0,
 
             // top rung
-            30, 0,
-            100, 0,
-            30, 30,
-            30, 30,
-            100, 0,
-            100, 30,
+             30,  0, 0,
+            100,  0, 0,
+             30, 30, 0,
+             30, 30, 0,
+            100,  0, 0,
+            100, 30, 0,
 
             // middle rung
-            30, 60,
-            67, 60,
-            30, 90,
-            30, 90,
-            67, 60,
-            67, 90,
+            30, 60, 0,
+            67, 60, 0,
+            30, 90, 0,
+            30, 90, 0,
+            67, 60, 0,
+            67, 90, 0,
         ]), 
         gl.STATIC_DRAW
     );
@@ -71,9 +71,9 @@ async function main(){
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer); // pensar en "gl.ARRAY_BUFFER" = positionBuffer
     setGeometry(gl);
 
-    var translation = [135, 135];
-    var angleInRadians = 0;
-    var scale = [1, 1];
+    var translation = [135, 135, 0];
+    var rotation = [0, 0, 0];
+    var scale = [1, 1, 1];
     var color = [Math.random(), Math.random(), Math.random(), 1];
 
     drawScene();
@@ -93,28 +93,36 @@ async function main(){
     });
 
     // actualizar la rotacion
-    document.getElementById("myRange").oninput = function(e) {
-        document.getElementById("angleValue").innerHTML = e.target.value;
-        var angleInDegrees = 360 - e.target.value;
-        angleInRadians = angleInDegrees * Math.PI / 180;
-        drawScene();
-    }
+    [
+        {'element':document.getElementById("rotationRangeX"),'innerHtml':'rotate x'},
+        {'element':document.getElementById("rotationRangeY"),'innerHtml':'rotate y'},
+        {'element':document.getElementById("rotationRangeZ"),'innerHtml':'rotate z'}
+    ].forEach((item, i, l)=>{
+        let div = item.element.parentElement;
+        let spanValue = {'spanHtml':div.getElementsByTagName("span")[0],'desc':item.innerHtml};
+        item.element.addEventListener('input',(e)=>{
+            spanValue.spanHtml.innerHTML = spanValue.desc +' '+ e.target.value;
+            var angleInDegrees = 360 - e.target.value;
+            rotation[i] = angleInDegrees * Math.PI/180; // ángulo en radianes
+            drawScene();
+        })
+    });
 
-    // actualizar el escalado en x
-    document.getElementById("myRangeScalex").oninput = (e)=>{
-        document.getElementById("scaleX").innerHTML = e.target.value;
-        scale[0] = e.target.value;
-        drawScene();
-    };
-
-    // actualizar el escalado en y
-    document.getElementById("myRangeScaley").oninput = (e)=>{
-        document.getElementById("scaleY").innerHTML = e.target.value;
-        scale[1] = e.target.value;
-        drawScene();
-    };
+    // actualizar el escalado
+    [
+        {'element':document.getElementById("myRangeScalex"),'innerHtml':'scale x'},
+        {'element':document.getElementById("myRangeScaley"),'innerHtml':'scale y'},
+        {'element':document.getElementById("myRangeScalez"),'innerHtml':'scale z'}
+    ].forEach((item,i,l)=>{
+        let div = item.element.parentElement;
+        let spanValue = {'spanHtml':div.getElementsByTagName("span")[0],'desc':item.innerHtml};
+        item.element.addEventListener('input', (e)=>{
+            spanValue.spanHtml.innerHTML = spanValue.desc+' '+e.target.value;
+            scale[i] = e.target.value;
+            drawScene();
+        })
+    });
     
-
     function drawScene() {
         initResize(gl.canvas)
         resizeCanvasToDisplaySize(gl.canvas);
@@ -135,7 +143,7 @@ async function main(){
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     
         // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-        var size = 2;          // 2 components per iteration
+        var size = 3;          // 3 components per iteration
         var type = gl.FLOAT;   // the data is 32bit floats
         var normalize = false; // don't normalize the data
         var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
@@ -143,14 +151,16 @@ async function main(){
         gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
     
         // Procesando las matrices en un orden específico
-        let matrix = m3.projection(gl.canvas.clientWidth, gl.canvas.clientHeight);
-        matrix = m3.translate(matrix, translation[0], translation[1]);
-        matrix = m3.rotate(matrix, angleInRadians)
-        matrix = m3.scale(matrix, scale[0], scale[1]);
+        let matrix = m4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
+        matrix = m4.translate(matrix, translation[0], translation[1], translation[2]);
+        matrix = m4.xRotate(matrix, rotation[0]);
+        matrix = m4.yRotate(matrix, rotation[1]);
+        matrix = m4.zRotate(matrix, rotation[2]);
+        matrix = m4.scale(matrix, scale[0], scale[1], scale[2]);
 
         // asignarle el valor a los uniforms
         gl.uniform4fv(colorLocation, color);
-        gl.uniformMatrix3fv(matrixLocation, false, matrix);
+        gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
         // dibujar la figura geometrica
         var primitiveType = gl.TRIANGLES;

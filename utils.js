@@ -107,104 +107,162 @@ function setRectangle(gl, x, y, width, height){
     );
 }
 
-let m3 = {
+let m4 = {
     /**
-     * |a0 a1 a2|-----|b0 b1 b2|  
-     * |a3 a4 a5|--x--|b3 b4 b5|  
-     * |a6 a7 a8|-----|b6 b7 b8|  
+     * |a0   a1  a2  a3|-----|b0  b1  b2   b3|  
+     * |a4   a5  a6  a7|--x--|b4  b5  b6   b7|  
+     * |a8   a9 a10 a11|-----|b8  b9  b10 b11|  
+     * |a12 a13 a14 a15|     |b12 b13 b14 b15|  
      * 
-     * multiplicacion de dos matrices de 3x3
+     * multiplicacion de dos matrices de 4x4
      * @param {Array} a 
      * @param {Array} b 
      */
-    multiplicar:(a, b)=>{
-        let a0 = a[0]; let a1 = a[1]; let a2 = a[2];
-        let a3 = a[3]; let a4 = a[4]; let a5 = a[5];
-        let a6 = a[6]; let a7 = a[7]; let a8 = a[8];
+    multiply:(a, b)=>{
+        let a0  =  a[0]; let a1  =  a[1]; let a2  =  a[2]; let a3  =  a[3];
+        let a4  =  a[4]; let a5  =  a[5]; let a6  =  a[6]; let a7  =  a[7];
+        let a8  =  a[8]; let a9  =  a[9]; let a10 = a[10]; let a11 = a[11];
+        let a12 = a[12]; let a13 = a[13]; let a14 = a[14]; let a15 = a[15];
 
-        let b0 = b[0]; let b1 = b[1]; let b2 = b[2];
-        let b3 = b[3]; let b4 = b[4]; let b5 = b[5];
-        let b6 = b[6]; let b7 = b[7]; let b8 = b[8];
+        let b0  =  b[0]; let b1  =  b[1]; let b2  =  b[2]; let b3  =  b[3];
+        let b4  =  b[4]; let b5  =  b[5]; let b6  =  b[6]; let b7  =  b[7];
+        let b8  =  b[8]; let b9  =  b[9]; let b10 = b[10]; let b11 = b[11];
+        let b12 = b[12]; let b13 = b[13]; let b14 = b[14]; let b15 = b[15];
 
         return [
-            b0*a0 + b1*a3 + b2*a6,// }
-            b0*a1 + b1*a4 + b2*a7,//  > new row 1
-            b0*a2 + b1*a5 + b2*a8,// }
+            b0*a0 + b1*a4 +  b2*a8 + b3*a11,// | new
+            b0*a1 + b1*a5 +  b2*a9 + b3*a12,// | row
+            b0*a2 + b1*a6 + b2*a10 + b3*a14,// | 1
+            b0*a3 + b1*a7 + b2*a11 + b3*a15,// |
 
-            b3*a0 + b4*a3 + b5*a6,// }
-            b3*a1 + b4*a4 + b5*a7,//  > new row 2
-            b3*a2 + b4*a5 + b5*a8,// }
+            b4*a0 + b5*a4 +  b6*a8 + b7*a11,// | new
+            b4*a1 + b5*a5 +  b6*a9 + b7*a12,// | row
+            b4*a2 + b5*a6 + b6*a10 + b7*a14,// | 2
+            b4*a3 + b5*a7 + b6*a11 + b7*a15,// |
 
-            b6*a0 + b7*a3 + b8*a6,// }
-            b6*a1 + b7*a4 + b8*a7,//  > new row 3
-            b6*a2 + b7*a5 + b8*a8,// }
+            b8*a0 + b9*a4 +  b10*a8 + b11*a11,// | new
+            b8*a1 + b9*a5 +  b10*a9 + b11*a12,// | row
+            b8*a2 + b9*a6 + b10*a10 + b11*a14,// | 3
+            b8*a3 + b9*a7 + b10*a11 + b11*a15,// |
+
+            b12*a0 + b13*a4 +  b14*a8 + b15*a11,// | new
+            b12*a1 + b13*a5 +  b14*a9 + b15*a12,// | row
+            b12*a2 + b13*a6 + b14*a10 + b15*a14,// | 4
+            b12*a3 + b13*a7 + b14*a11 + b15*a15,// |
         ]
     },
 
     /**
-     * Se obtiene la "Matriz de traslación" a partir de un punto 2D (x, y)
+     * Se obtiene la "Matriz de traslación" a partir de un punto 3D (x, y, z)
      *   
      * @param {number} tx : cantidad (+ o -) a mover el punto en el eje x
      * @param {number} ty : cantidad (+ o -) a mover el punto en el eje y
+     * @param {number} tz : cantidad (+ o -) a mover el punto en el eje z
      * @returns un array que representa la matriz con 9 posiciones
      */
-    traslacion:(tx,ty)=>{
+    translation:(tx, ty, tz)=>{
         return [
-            1, 0, 0,
-            0, 1, 0,
-            tx, ty, 1
+            1,  0,  0,  0,
+            0,  1,  0,  0,
+            0,  0,  1,  0,
+            tx, ty, tz, 1,
         ]
     },
 
     /**
-     * Se obtiene la "Matriz de rotacion" a partir de un alguno en radianes
+     * Se obtiene la "Matriz de rotacion" a partir de un alguno en radianes para el eje x
      *   
      * @param {number} angleInRadians angulo de la rotacion en radianes
-     * @returns un array que representa la matriz con 9 posiciones
+     * @returns
      */
-    rotacion:(angleInRadians)=>{
-        let cos = Math.cos(angleInRadians);
-        let sin = Math.sin(angleInRadians);
+    xRotation:(angleInRadians)=>{
+        let c = Math.cos(angleInRadians);
+        let s = Math.sin(angleInRadians);
         return [
-            cos,-sin, 0,
-            sin, cos, 0,
-            0, 0, 1
+            1,  0,  0,  0,
+            0,  c,  s,  0,
+            0, -s,  c,  0,
+            0,  0,  0,  1,
         ]
     },
 
     /**
-     * Se obtiene la "Matriz de escala" a partir de las cantidades del escalado para x e y.
+     * Se obtiene la "Matriz de rotacion" a partir de un alguno en radianes para el eje y
+     *   
+     * @param {number} angleInRadians angulo de la rotacion en radianes
+     * @returns
+     */
+    yRotation:(angleInRadians)=>{
+        let c = Math.cos(angleInRadians);
+        let s = Math.sin(angleInRadians);
+        return[
+            c,  0, -s,  0,
+            0,  1,  0,  0,
+            s,  0,  c,  0,
+            0,  0,  0,  1,
+        ]
+    },
+
+    /**
+     * Se obtiene la "Matriz de rotacion" a partir de un alguno en radianes para el eje z
+     *   
+     * @param {number} angleInRadians angulo de la rotacion en radianes
+     * @returns
+     */
+    zRotation:(angleInRadians)=>{
+        let c = Math.cos(angleInRadians);
+        let s = Math.sin(angleInRadians);
+        return[
+            c,  s,  0,  0,
+            -s, c,  0,  0,
+            0,  0,  1,  0,
+            0,  0,  0,  1,
+        ]
+    },
+
+    /**
+     * Se obtiene la "Matriz de escalado" a partir de las cantidades del escalado para x, y, z.
      *   
      * @param {*} sx monto a escalar en el eje x
      * @param {*} sy monto a escalar en el eje y
-     * @returns un array que representa la matriz con 9 posiciones
+     * @param {*} sz monto a escalar en el eje z
+     * @returns un array que representa la matriz con 16 posiciones
      */
-    escalado:(sx, sy)=>{
+    scaling:(sx, sy, sz)=>{
         return[
-            sx, 0, 0,
-            0, sy, 0,
-            0,  0, 1
+            sx, 0,  0,  0,
+            0, sy,  0,  0,
+            0,  0, sz,  0,
+            0,  0,  0,  1
         ]
     },
 
-    projection: function(width, height) {
-        // Note: This matrix flips the Y axis so that 0 is at the top.
+    projection: function(width, height, depth) {
         return [
-            2 / width, 0, 0,
-            0, -2 / height, 0,
-            -1, 1, 1
+            2/width, 0, 0, 0,
+            0, -2/height, 0, 0,
+            0, 0, 2/depth, 0,
+            -1, 1, 0, 1
         ];
     },
 
-    translate:(m, tx, ty)=>{
-        return m3.multiplicar(m, m3.traslacion(tx, ty));
+    translate:(m, tx, ty, tz)=>{
+        return m4.multiply(m, m4.translation(tx, ty, tz));
     },
 
-    rotate: (m, angleInRadians)=>{
-        return m3.multiplicar(m, m3.rotacion(angleInRadians));
+    xRotate: (m, angleInRadians)=>{
+        return m4.multiply(m, m4.xRotation(angleInRadians));
     },
 
-    scale: (m, sx, sy)=>{
-        return m3.multiplicar(m, m3.escalado(sx, sy));
+    yRotate: (m, angleInRadians)=>{
+        return m4.multiply(m, m4.yRotation(angleInRadians));
+    },
+
+    zRotate: (m, angleInRadians)=>{
+        return m4.multiply(m, m4.zRotation(angleInRadians));
+    },
+
+    scale: (m, sx, sy, sz)=>{
+        return m4.multiply(m, m4.scaling(sx, sy, sz));
     }
 }

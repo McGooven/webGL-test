@@ -10,22 +10,39 @@
 <body>
     <canvas id="myCanvas"></canvas>
     <div class="slidecontainer">
-        <input type="range" min="0" max="360" value="0" class="slider" id="myRange" placeholder="angulo de rotacion °">
-        <span id="angleValue"></span>
+        <input type="range" min="0" max="360" value="0" class="slider" id="rotationRangeX" placeholder="angulo de rotacion ° en x">
+        <span id="angleValueX">rotate x</span>
     </div>
     <div class="slidecontainer">
+        <input type="range" min="0" max="360" value="0" class="slider" id="rotationRangeY" placeholder="angulo de rotacion ° en y">
+        <span id="angleValueY">rotate y</span>
+    </div>
+    <div class="slidecontainer">
+        <input type="range" min="0" max="360" value="0" class="slider" id="rotationRangeZ" placeholder="angulo de rotacion ° en z">
+        <span id="angleValueZ">rotate z</span>
+    </div>
+
+    <div class="slidecontainer">
         <input type="range" min="-5.00" max="5.00" value="1.00" step="0.01" class="slider" id="myRangeScalex">
-        <span id="scaleX"></span>
+        <span id="scaleX">scale x</span>
     </div>
     <div class="slidecontainer">
         <input type="range" min="-5.00" max="5.00" value="1.00" class="slider" step="0.01" id="myRangeScaley">
-        <span id="scaleY"></span>
+        <span id="scaleY">scale y</span>
+    </div>
+    <div class="slidecontainer">
+        <input type="range" min="-5.00" max="5.00" value="1.00" class="slider" step="0.01" id="myRangeScalez">
+        <span id="scaleZ">scale y</span>
     </div>
 </body>
 <script>
-    document.getElementById("angleValue").innerHTML =  document.getElementById("myRange").value;
-    document.getElementById("scaleX").innerHTML =  document.getElementById("myRangeScalex").value;
-    document.getElementById("scaleY").innerHTML =  document.getElementById("myRangeScaley").value;
+    document.getElementById("angleValueX").innerHTML = 'rotate x '+document.getElementById("rotationRangeX").value;
+    document.getElementById("angleValueY").innerHTML = 'rotate y '+document.getElementById("rotationRangeY").value;
+    document.getElementById("angleValueZ").innerHTML = 'rotate z '+document.getElementById("rotationRangeZ").value;
+
+    document.getElementById("scaleX").innerHTML = 'scale x '+document.getElementById("myRangeScalex").value;
+    document.getElementById("scaleY").innerHTML = 'scale y '+document.getElementById("myRangeScaley").value;
+    document.getElementById("scaleZ").innerHTML = 'scale z '+document.getElementById("myRangeScalez").value;
 </script>
 <script id="vsh" src="vertexShader.glsl" type="notjs"></script>
 <script id="fsh" src="fragmentShader.glsl" type="notjs"></script>
