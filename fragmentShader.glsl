@@ -2,8 +2,9 @@
 // así que le asignamos uno, mediump es solo uno de ellas.
 precision mediump float;
 
-uniform vec4 u_color;
+// pasado desde el vertex shader.
+varying vec4 v_color;
 
 void main(){
-    gl_FragColor= u_color;
+    gl_FragColor= v_color;
 }
