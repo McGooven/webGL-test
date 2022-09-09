@@ -9,30 +9,133 @@ function setGeometry(gl){
     gl.bufferData(
         gl.ARRAY_BUFFER, 
         new Float32Array([
-            // left column
-             0,   0, 0,
-            30,   0, 0,
-             0, 150, 0,
-             0, 150, 0,
-            30,   0, 0,
-            30, 150, 0,
+          // left column front
+          0,   0,  0,
+          30,   0,  0,
+           0, 150,  0,
+           0, 150,  0,
+          30,   0,  0,
+          30, 150,  0,
 
-            // top rung
-             30,  0, 0,
-            100,  0, 0,
-             30, 30, 0,
-             30, 30, 0,
-            100,  0, 0,
-            100, 30, 0,
+         // top rung front
+          30,   0,  0,
+         100,   0,  0,
+          30,  30,  0,
+          30,  30,  0,
+         100,   0,  0,
+         100,  30,  0,
 
-            // middle rung
-            30, 60, 0,
-            67, 60, 0,
-            30, 90, 0,
-            30, 90, 0,
-            67, 60, 0,
-            67, 90, 0,
-        ]), 
+         // middle rung front
+          30,  60,  0,
+          67,  60,  0,
+          30,  90,  0,
+          30,  90,  0,
+          67,  60,  0,
+          67,  90,  0,
+
+         // left column back
+           0,   0,  30,
+          30,   0,  30,
+           0, 150,  30,
+           0, 150,  30,
+          30,   0,  30,
+          30, 150,  30,
+
+         // top rung back
+          30,   0,  30,
+         100,   0,  30,
+          30,  30,  30,
+          30,  30,  30,
+         100,   0,  30,
+         100,  30,  30,
+
+         // middle rung back
+          30,  60,  30,
+          67,  60,  30,
+          30,  90,  30,
+          30,  90,  30,
+          67,  60,  30,
+          67,  90,  30,
+
+         // top
+           0,   0,   0,
+         100,   0,   0,
+         100,   0,  30,
+           0,   0,   0,
+         100,   0,  30,
+           0,   0,  30,
+
+         // top rung right
+         100,   0,   0,
+         100,  30,   0,
+         100,  30,  30,
+         100,   0,   0,
+         100,  30,  30,
+         100,   0,  30,
+
+         // under top rung
+         30,   30,   0,
+         30,   30,  30,
+         100,  30,  30,
+         30,   30,   0,
+         100,  30,  30,
+         100,  30,   0,
+
+         // between top rung and middle
+         30,   30,   0,
+         30,   30,  30,
+         30,   60,  30,
+         30,   30,   0,
+         30,   60,  30,
+         30,   60,   0,
+
+         // top of middle rung
+         30,   60,   0,
+         30,   60,  30,
+         67,   60,  30,
+         30,   60,   0,
+         67,   60,  30,
+         67,   60,   0,
+
+         // right of middle rung
+         67,   60,   0,
+         67,   60,  30,
+         67,   90,  30,
+         67,   60,   0,
+         67,   90,  30,
+         67,   90,   0,
+
+         // bottom of middle rung.
+         30,   90,   0,
+         30,   90,  30,
+         67,   90,  30,
+         30,   90,   0,
+         67,   90,  30,
+         67,   90,   0,
+
+         // right of bottom
+         30,   90,   0,
+         30,   90,  30,
+         30,  150,  30,
+         30,   90,   0,
+         30,  150,  30,
+         30,  150,   0,
+
+         // bottom
+         0,   150,   0,
+         0,   150,  30,
+         30,  150,  30,
+         0,   150,   0,
+         30,  150,  30,
+         30,  150,   0,
+
+         // left side
+         0,   0,   0,
+         0,   0,  30,
+         0, 150,  30,
+         0,   0,   0,
+         0, 150,  30,
+         0, 150,   0]), 
         gl.STATIC_DRAW
     );
 }
@@ -71,7 +174,7 @@ async function main(){
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer); // pensar en "gl.ARRAY_BUFFER" = positionBuffer
     setGeometry(gl);
 
-    var translation = [135, 135, 0];
+    var translation = [125, 125, 0];
     var rotation = [0, 0, 0];
     var scale = [1, 1, 1];
     var color = [Math.random(), Math.random(), Math.random(), 1];
@@ -80,7 +183,6 @@ async function main(){
     
     // actualizar la posicion
     window.addEventListener("keydown", (event) =>{
-        // console.log(event.code,' / ',translation);
         if(event.code=='ArrowUp' || event.code=='ArrowDown'){
             translation[1] += keys[event.code];
         }
@@ -165,7 +267,7 @@ async function main(){
         // dibujar la figura geometrica
         var primitiveType = gl.TRIANGLES;
         var offset = 0;
-        var count = 18; // 6 triangulos para la F, por ende 3 vertices por triangulo.
+        var count = 16*6; // 6 triangulos para la F, por ende 3 vertices por triangulo.
         gl.drawArrays(primitiveType, offset, count);
     }
 }
