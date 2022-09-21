@@ -237,6 +237,14 @@ let m4 = {
         ]
     },
 
+    /**
+     * --- obsoleto ---
+     * funcion para invertir la y en el 2d
+     * @param {number} width 
+     * @param {number} height 
+     * @param {number} depth 
+     * @returns 
+     */
     projection: function(width, height, depth) {
         return [
             2/width, 0, 0, 0,
@@ -244,6 +252,19 @@ let m4 = {
             0, 0, 2/depth, 0,
             -1, 1, 0, 1,
         ];
+    },
+    
+    orthographic:(left, right, bottom, top, near, far)=>{
+        return [
+            2/(right - left), 0, 0, 0,
+            0, 2/(top - bottom), 0, 0,
+            0, 0, 2/(near - far), 0,
+       
+            (left + right)/(left - right),
+            (bottom + top)/(bottom - top),
+            (near + far)/(near - far),
+            1,
+          ];
     },
 
     translate:(m, tx, ty, tz)=>{
