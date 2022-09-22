@@ -310,6 +310,7 @@ async function main(){
 
     // obtener uniforms
     var matrixLocation = gl.getUniformLocation(program, 'u_matrix');
+    let fudgeLocation = gl.getUniformLocation(program, 'u_fudgeFactor');
 
     var positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer); // pensar en "gl.ARRAY_BUFFER" = positionBuffer
@@ -324,6 +325,7 @@ async function main(){
     var translation = [125, 125, 0];
     var rotation = [0, 0, 0];
     var scale = [1, 1, 1];
+    let fudgeFactor = 1;
 
     drawScene();
     
@@ -370,6 +372,20 @@ async function main(){
             drawScene();
         })
     });
+
+    // actualizar fudgeFactor
+    [
+        {'element':document.getElementById('fudgeFactorRange'), 'innerHtml':'fudgeFactor'}
+    ].forEach((item, i, l) => {
+        let div = item.element.parentElement;
+        let spanValue = {'spanHtml':div.getElementsByTagName("span")[0], 'desc':item.innerHtml};
+        item.element.addEventListener('input', (e)=>{
+            spanValue.spanHtml.innerHTML = spanValue.desc+' '+e.target.value;
+            fudgeFactor = e.target.value;
+            drawScene();
+        })
+    });
+    
     
     function drawScene() {
         initResize(gl.canvas)
@@ -419,6 +435,7 @@ async function main(){
         var near = 400;
         var far = -400;
         let matrix = m4.orthographic(left, right, bottom, top, near, far);
+        // let matrix = m4.projection(right, bottom, 400);
         matrix = m4.translate(matrix, translation[0], translation[1], translation[2]);
         matrix = m4.xRotate(matrix, rotation[0]);
         matrix = m4.yRotate(matrix, rotation[1]);
@@ -427,6 +444,7 @@ async function main(){
 
         // asignarle el valor a los uniforms
         gl.uniformMatrix4fv(matrixLocation, false, matrix);
+        gl.uniform1f(fudgeLocation,fudgeFactor);
 
         // dibujar la figura geometrica
         var primitiveType = gl.TRIANGLES;

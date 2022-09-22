@@ -10,6 +10,10 @@
 <body>
     <canvas id="myCanvas"></canvas>
     <div class="slidecontainer">
+        <input type="range" min="0.00" max="2.00" value="1.00" step="0.001" class="slider" id="fudgeFactorRange">
+        <span id="fudgeFactorValue">fudgeFactor</span>
+    </div>
+    <div class="slidecontainer">
         <input type="range" min="0" max="360" value="0" class="slider" id="rotationRangeX" placeholder="angulo de rotacion ° en x">
         <span id="angleValueX">rotate x</span>
     </div>
@@ -36,6 +40,8 @@
     </div>
 </body>
 <script>
+    document.getElementById("fudgeFactorValue").innerHTML = 'fudgeFactor '+document.getElementById("fudgeFactorRange").value;
+
     document.getElementById("angleValueX").innerHTML = 'rotate x '+document.getElementById("rotationRangeX").value;
     document.getElementById("angleValueY").innerHTML = 'rotate y '+document.getElementById("rotationRangeY").value;
     document.getElementById("angleValueZ").innerHTML = 'rotate z '+document.getElementById("rotationRangeZ").value;
